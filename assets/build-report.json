@@ -1,9 +1,10 @@
 {
-  "originalBytes": 10285345,
-  "runtimeImageBytes": 236530,
+  "originalBytes": 18067699,
+  "runtimeImageBytes": 627070,
   "atlasBytes": 159972,
   "backgroundBytes": 76558,
-  "sprites": 22,
-  "decodedAtlasBytes": 3538944,
-  "reductionPercent": 97.7
+  "sprites": 52,
+  "decodedAtlasBytes": 7962624,
+  "reductionPercent": 96.53,
+  "extensionAtlasBytes": 390540
 }

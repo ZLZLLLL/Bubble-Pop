@@ -31,3 +31,12 @@ python scripts/build_assets.py --cutouts
 CSS background-position 按索引复用同一张图，棋盘每个格子不单独发图片请求。`assets.js` 预加载两张图；缓存由浏览器管理，不把二进制写入 localStorage 或 Base64 JS。服务器对带内容哈希的 WebP 设置一年 immutable 缓存，索引与代码每次重新验证。修改素材后构建会生成新文件名，避免旧缓存。
 
 采用 WebP 仍然属于图片格式；优化来自裁切、尺寸控制、压缩、合图和缓存，并不承诺任意设备上固定加载时长。现有 DOM/CSS 棋盘不需要引入 Canvas/WebGL 或纹理压缩引擎。
+
+## 新增等级素材
+
+新增 30 个物品：甜点第 7–21 级、稻米第 6–20 级。顺序为每张图从左到右、从上到下，再接下一张图。
+`extensions.<内容哈希>.webp` 是独立的 960×1152 透明图集，5 列×6 行；运行时共 52 个素材。索引中的每个扩展帧记录自己的图集文件与行列数，旧图集坐标保持不变。
+
+首次处理：`python scripts/extend_assets.py C:/Users/30808/Desktop`。原图会复制到已被 Git 忽略的 `assets/source/`。之后执行 `python scripts/extend_assets.py` 可重复构建；重建基础图集后也需执行此命令恢复扩展索引，再运行 `npm run build`。
+
+脚本按每一行的实际间距裁切，清除裁切边缘的相邻物品残片，仅删除与外部连通的近白色背景。预览生成到 `output/extensions-preview.jpg`，原图和独立透明 PNG 不进入服务器发布包。

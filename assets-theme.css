@@ -54,3 +54,5 @@ button:disabled{cursor:wait;opacity:.65}.board-tools{display:flex;align-items:ce
 .catalog-row{gap:4px;flex-wrap:wrap}.catalog-item{flex:1;min-width:64px}.catalog-item>.sprite{margin:auto}
 .chain-title{font-family:serif;font-size:18px;margin-bottom:0}
 @media(max-width:500px){.shopfront{height:231px}.detail{flex-wrap:wrap}.detail>div:nth-child(2){min-width:200px}.sources{width:100%;margin-top:4px}.sources .produce{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;min-height:40px}.sources .produce span{margin:0}.catalog-item{min-width:72px}}
+
+.catalog-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 5px}.catalog-item{min-width:0;font-size:11px}.catalog-item small{display:block;color:#7a805b;font:11px Georgia;margin:3px 0}#modal{max-height:85dvh;overflow-y:auto}
