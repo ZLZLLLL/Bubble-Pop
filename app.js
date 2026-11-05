@@ -5,7 +5,7 @@ function save(){try{localStorage.setItem(STORAGE,JSON.stringify(state));}catch{}
 function toast(message){$('#toast').textContent=message;$('#toast').classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('visible'),2600);}
 function chime(merge=false){if(!sound)return;try{audioContext??=new (window.AudioContext||window.webkitAudioContext)();audioContext.resume();[0,...(merge?[.11]:[])].forEach((t,i)=>{const o=audioContext.createOscillator(),g=audioContext.createGain();o.type='sine';o.frequency.value=i?880:660;g.gain.setValueAtTime(.045,audioContext.currentTime+t);g.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+t+.3);o.connect(g);g.connect(audioContext.destination);o.start(audioContext.currentTime+t);o.stop(audioContext.currentTime+t+.31);});}catch{}}
 function showModal(content){$('#modal-content').innerHTML=content;if(!$('#modal').open)$('#modal').showModal();}
-$('.modal-close').onclick=()=>$('#modal').close();$('#modal').addEventListener('click',e=>{if(e.target===$('#modal')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
+$('.modal-close').onclick=()=>$('#modal').close();$('#modal').addEventListener('click',e=>{if(e.target===$('#modal')&&!e.target.dataset.busy){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
 function render(pop=-1){const focused=document.activeElement?.dataset?.index;$('#energy-value').textContent=state.energy;$('#coin-value').textContent=state.coins;$('#gem-value').textContent=state.gems;$('#level-value').textContent=['壹','贰','叁','肆','伍'][Math.min(4,Math.floor(state.served/3))];
 $('#board').innerHTML=state.board.map((x,i)=>{const item=Game.items[x];return `<button class="cell${x==='locked'?' locked':''}${selected===i?' selected':''}${pop===i?' pop':''}" data-index="${i}" aria-label="第${Math.floor(i/7)+1}行第${i%7+1}列，${item?.name||(x==='locked'?'竹帘，15铜钱解锁':'空位')}" aria-pressed="${selected===i}">${item?icon(item.icon)+(item.generator?`<span class="source-mark">${item.generator==='rice'?'稻':'茶'}</span>`:`<span class="item-level">${['Ⅰ','Ⅱ','Ⅲ','Ⅳ','Ⅴ','Ⅵ'][item.level-1]}</span>`):x==='locked'?icon('blind','blind-sprite'):''}</button>`;}).join('');
 $('#orders').innerHTML=state.orders.map((id,i)=>{const o=Game.orders[id],ready=Game.canServe(state,i);return `<div class="order${ready?' order-ready':''}" data-order="${i}" tabindex="0" role="group" aria-label="${o.name}的订单：${o.needs.map(n=>Game.items[n].name).join('、')}，奖励${o.reward}铜钱。${ready?'拖入所需物品交付':'集齐后拖入交付'}">${icon(['grandma','scholar','woman','official','girl','sage'][id],'patron')}<span class="order-name">${o.name}</span><div class="tray">${icon('tray','tray-art')}${o.needs.map(n=>icon(n)).join('')}<span class="order-reward">${icon('coin')}${o.reward}</span></div><span class="order-hint">${ready?'拖入交付':'集齐后拖入'}</span></div>`;}).join('');
@@ -61,16 +61,30 @@ $('#orders').addEventListener('keydown',e=>{
 });
 $('#produce-rice').onclick=()=>produce('rice');
 $('#produce-tea').onclick=()=>produce('tea');
-$('#help').onclick=()=>showModal(`<p class="dialog-kicker">小铺入门</p><h2>一合一味，慢慢来</h2><ul><li><b>取食材：</b>稻米篓只出稻谷，茶点篮只出茶叶；点击棋盘上的生成器或下方对应按钮，每次消耗 1 点体力。</li><li><b>合成好物：</b>把相同物品拖到一起；也可先点一件，再点另一件。不同物品会交换位置。</li><li><b>招待客人：</b>集齐上方订单，将其中一件所需物品拖到顾客托盘，一次交付整单赚取铜钱。</li><li><b>扩大小铺：</b>点击与已开放格子相邻的竹帘，花 15 铜钱解锁。</li><li><b>补充体力：</b>领取每日好礼，或用 3 宝石换 30 体力。</li></ul><p>进度自动保存到服务器。键盘可先选中物品，再 Tab 到顾客并按 Enter 交付。</p>`);
+$('#help').onclick=()=>showModal(`<p class="dialog-kicker">小铺入门</p><h2>一合一味，慢慢来</h2><ul><li><b>取食材：</b>稻米篓只出稻谷，茶点篮只出茶叶；点击棋盘上的生成器或下方对应按钮，每次消耗 1 点体力。</li><li><b>合成好物：</b>把相同物品拖到一起；也可先点一件，再点另一件。不同物品会交换位置。</li><li><b>招待客人：</b>集齐上方订单，将其中一件所需物品拖到顾客托盘，一次交付整单赚取铜钱。</li><li><b>扩大小铺：</b>点击与已开放格子相邻的竹帘，花 15 铜钱解锁。</li><li><b>补充体力：</b>点击体力旁的 + 或「兑换体力」，输入兑换码领取。</li></ul><p>进度自动保存到服务器。键盘可先选中物品，再 Tab 到顾客并按 Enter 交付。</p>`);
 $('#guide').onclick=()=>showModal(`<p class="dialog-kicker">山野好物集</p><h2>物品图鉴</h2><p>两件相同好物合成下一阶，两条链独立升级。按顾客需求交付对应物品。</p>${Object.entries(Game.chains).map(([key,chain])=>`<h3 class="chain-title">${key==='rice'?'稻米链':'茶点链'}</h3><div class="catalog-row">${chain.map((x,i)=>`${i?'<span>›</span>':''}<div class="catalog-item">${icon(x)}${Game.items[x].name}</div>`).join('')}</div>`).join('')}`);
-function today(){const d=new Date();return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
-$('#daily').onclick=()=>{const claimed=state.daily===today();showModal(`<p class="dialog-kicker">好日子，有好礼</p><h2>${claimed?'今日已领，明日再会':'山间送来一份心意'}</h2><div class="catalog-row">${[['energy','30 体力'],['coin','30 铜钱'],['gem','3 宝石']].map(([id,t])=>`<div class="catalog-item">${icon(id)}${t}</div>`).join('')}</div><p>${claimed?'去煮一壶好茶，招待今天的客人吧。':'每天来小铺坐坐，都有一份小惊喜。'}</p>${claimed?'':'<button class="modal-action" id="claim">收下好礼</button>'}`);if(!claimed)$('#claim').onclick=()=>{if(state.daily===today())return;state.daily=today();state.energy+=30;state.coins+=30;state.gems+=3;render();$('#modal').close();toast('好礼已收下 · 愿你今日有清欢');chime(true);};};
-$('#add-energy').onclick=()=>{showModal(`<p class="dialog-kicker">歇一歇，再开张</p><h2>补充体力</h2><p>花费 <b>3 宝石</b>，补充 <b>30 点体力</b>。<br>当前拥有 ${state.gems} 宝石。每日好礼也可领取体力。</p><button class="modal-action" id="refill">兑换 30 体力</button>`);$('#refill').onclick=()=>{if(state.gems<3)return toast('宝石不足，去看看今日好礼吧');state.gems-=3;state.energy+=30;render();$('#modal').close();toast('茶香满满 · +30 体力');};};
+function openRedeem(){
+ showModal(`<p class="dialog-kicker">把心意，换成好元气</p><h2>兑换体力</h2><p>输入兑换码，为小铺补充体力。每个兑换码仅可领取一次。</p><form id="redeem-form"><label for="redeem-code">兑换码</label><input id="redeem-code" name="code" autocomplete="off" placeholder="请输入兑换码" maxlength="100" required><p id="redeem-error" class="form-error" role="alert"></p><button class="modal-action" type="submit">领取体力</button></form>`);
+ $('#redeem-code').focus();
+ $('#redeem-form').onsubmit=async e=>{
+  e.preventDefault();const form=e.currentTarget,button=form.querySelector('button'),error=$('#redeem-error');
+  button.disabled=true;button.textContent='兑换中…';error.textContent='';$('.game').inert=true;
+  const modal=$('#modal'),closeButton=$('.modal-close');closeButton.disabled=true;const blockClose=e=>e.preventDefault();modal.addEventListener('cancel',blockClose);modal.dataset.busy='true';
+  try{const result=await SaveStore.redeem(form.elements.code.value.trim());state=result.state;selected=null;render();modal.close();toast(`心意已收下 · +${result.energy} 体力`);chime(true);}
+  catch(e){error.textContent=e.message||'兑换失败，请稍后重试';}
+  finally{button.disabled=false;button.textContent='领取体力';closeButton.disabled=false;modal.removeEventListener('cancel',blockClose);delete modal.dataset.busy;if(!document.body.classList.contains('signed-out')&&!$('.chapter small').textContent.includes('请刷新'))$('.game').inert=false;}
+ };
+}
+$('#daily').onclick=openRedeem;$('#add-energy').onclick=openRedeem;
+$('#account').onclick=()=>{
+ showModal('<p class="dialog-kicker">山间小铺 · 我的账号</p><h2>你好，lulu</h2><p>进度会保存在小铺，下次登录可以继续。</p><p id="logout-error" class="form-error" role="alert"></p><button class="modal-action" id="logout">保存并退出登录</button>');
+ $('#logout').onclick=async()=>{const button=$('#logout');button.disabled=true;$('.game').inert=true;try{await SaveStore.settle();await Auth.logout();}catch(e){$('#logout-error').textContent=e.message;button.disabled=false;$('.game').inert=false;}};
+};
 $('#level').onclick=()=>showModal(`<p class="dialog-kicker">小铺成长记</p><h2>${['初逢小铺','茶香渐起','熟客盈门','山间名铺','云间佳话'][Math.min(4,Math.floor(state.served/3))]}</h2><p>已经招待 <b>${state.served}</b> 位客人，完成 <b>${state.merged}</b> 次合成。<br>${state.served<12?`再完成 ${3-state.served%3} 个订单，小铺就能升一级。`:'小铺已升至最高等级，继续享受山间清欢吧。'}</p>`);
 $('#sound').onclick=()=>{sound=!sound;$('#sound').textContent=`音效 · ${sound?'开':'关'}`;$('#sound').setAttribute('aria-label',sound?'关闭音效':'开启音效');chime();};
 async function boot(){
  $('.game').inert=true;$('.chapter small').textContent='正在读取服务器存档…';
- try{const remote=await SaveStore.load();if(remote){if(!Game.valid(remote))throw new Error('Invalid server save');state=remote;}state=Game.migrate(state);render();$('.game').inert=false;}
+ try{await Auth.ready();const remote=await SaveStore.load();if(remote){if(!Game.valid(remote))throw new Error('Invalid server save');state=remote;}state=Game.migrate(state);render();$('.game').inert=false;}
  catch{showModal('<h2>暂时无法读取存档</h2><p>请确认服务器正常运行，然后刷新重试。为避免覆盖进度，暂不进入游戏。</p><button class="modal-action" onclick="location.reload()">重新加载</button>');}
 }
 boot();

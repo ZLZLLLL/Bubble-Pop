@@ -1,6 +1,6 @@
 FROM node:24-bookworm-slim AS build
 WORKDIR /build
-COPY index.html style.css assets-theme.css game.js app.js assets.js persistence.js ./
+COPY index.html style.css assets-theme.css game.js app.js assets.js persistence.js auth.js ./
 COPY scripts/build-release.cjs ./scripts/build-release.cjs
 COPY assets/ ./assets/
 RUN node scripts/build-release.cjs

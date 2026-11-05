@@ -5,7 +5,8 @@ services:
     ports:
       - "${BIND_ADDRESS:-127.0.0.1}:${APP_PORT:-5188}:5188"
     environment:
-      ACCESS_PASSWORD: ${ACCESS_PASSWORD:?Set ACCESS_PASSWORD in the environment or local .env}
+      INITIAL_PASSWORD: ${INITIAL_PASSWORD:-}
+      COOKIE_SECURE: ${COOKIE_SECURE:-true}
     volumes:
       - game-data:/app/data
     healthcheck:

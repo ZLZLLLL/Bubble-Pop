@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#e9e5cd"><link rel="icon" href="data:,">
 <title>云间小铺 · 一合一味，一日清欢</title><link rel="stylesheet" href="style.css"><link rel="stylesheet" href="assets/atlas.css"><link rel="stylesheet" href="assets-theme.css"></head>
-<body>
+<body class="signed-out">
 <svg class="svg-library" xmlns="http://www.w3.org/2000/svg"><defs>
 <linearGradient id="jade" x2="0" y2="1"><stop stop-color="#a2d9cc"/><stop offset="1" stop-color="#438b7d"/></linearGradient><linearGradient id="gold" x2="0" y2="1"><stop stop-color="#ffe9a0"/><stop offset="1" stop-color="#d89b38"/></linearGradient><linearGradient id="rose" x2="0" y2="1"><stop stop-color="#ffd1bc"/><stop offset="1" stop-color="#d87867"/></linearGradient>
 <symbol id="leaf" viewBox="0 0 80 80"><path d="M15 57Q13 23 56 18Q62 50 28 60Z" fill="#849b51" stroke="#506943" stroke-width="2"/><path d="M26 61Q29 36 57 18M32 43L22 33M38 35L50 36" fill="none" stroke="#d5df95" stroke-width="2"/><path d="M35 61Q40 33 68 36Q68 61 35 61" fill="#b9b86a" stroke="#6e7e45" stroke-width="2"/><path d="M30 66L63 42" stroke="#596c3f" stroke-width="2"/></symbol>
@@ -19,16 +19,19 @@
 </defs></svg>
 <div class="landscape" aria-hidden="true"><div class="sun"></div><div class="mountain far"></div><div class="mountain near"></div><div class="branch">竹</div></div>
 <aside class="intro"><div class="eyebrow">山中有小铺 · 日子有清欢</div><h1>云间<br>小铺<span class="seal">茶食</span></h1><div class="intro-line"></div><p>收一篮山野，煮一盏春光。<br>把寻常小物，合成生活的小确幸。</p><span class="edition">合成茶铺 / 第一回 · 初逢</span></aside>
+<section id="login-screen" class="login-screen" aria-label="登录云间小铺">
+<div class="login-card"><p class="login-kicker">山中有小铺 · 等一位故人</p><span class="login-art sprite" data-sprite="teapot" style="background-position:40% 33.333333%" aria-hidden="true"></span><h2>推门，茶正温</h2><p class="login-subtitle">登录小铺，接着过你的山间日子。</p>
+<form id="login-form"><label for="login-name">账号</label><input id="login-name" name="username" autocomplete="username" required maxlength="64" placeholder="请输入账号"><label for="login-password">密码</label><input id="login-password" name="password" type="password" autocomplete="current-password" required maxlength="256" placeholder="请输入密码"><p id="login-error" class="form-error" role="alert"></p><button class="modal-action" type="submit">进入小铺</button></form><p class="login-footnote">一合一味 · 一日清欢</p></div></section>
 <main class="game" aria-label="云间小铺合成游戏">
 <header class="topbar"><button class="level" id="level" aria-label="查看茶铺等级"><span>茶铺</span><b id="level-value">壹</b></button><div class="resources"><div class="resource"><svg><use href="#energy"/></svg><b id="energy-value">100</b><button id="add-energy" aria-label="补充体力">+</button></div><div class="resource"><svg><use href="#coin"/></svg><b id="coin-value">60</b></div><div class="resource"><svg><use href="#gem"/></svg><b id="gem-value">12</b></div></div><button class="round help" id="help" aria-label="玩法说明">?</button></header>
 <section class="shopfront"><div class="shop-title"><span></span><p>云间小铺<small>今日宜 · 慢煮生活</small></p><span></span></div><div class="hanging-sign">营业中</div><div class="orders" id="orders"></div><div class="counter"></div></section>
-<div class="board-heading"><span><i></i> 一合一味，皆是欢喜</span><button id="sound" aria-label="开启音效">音效 · 关</button></div>
+<div class="board-heading"><span><i></i> 一合一味，皆是欢喜</span><div class="board-tools"><button id="account" aria-label="账号与退出"><span id="account-name">账号</span></button><button id="sound" aria-label="开启音效">音效 · 关</button></div></div>
 <section class="board-frame"><div class="board" id="board" aria-label="合成棋盘"></div></section>
 <section class="detail"><div class="detail-icon" id="detail-icon"></div><div><h2 id="detail-title">一篮好食，静候有缘人</h2><p id="detail-text">点食材篮出物 · 相同物品合成升级</p></div><div class="sources"><button id="produce-tea" class="produce">茶点篮<span>茶叶 · −1体力</span></button><button id="produce-rice" class="produce">稻米篓<span>稻谷 · −1体力</span></button></div></section>
-<nav class="bottom-nav" aria-label="茶铺功能"><button id="guide"><span class="nav-icon">册</span>物品图鉴</button><div class="chapter">山间无事 · 茶香正好<small>进度自动保存</small></div><button id="daily"><span class="nav-icon gift">礼</span>今日好礼</button></nav>
+<nav class="bottom-nav" aria-label="茶铺功能"><button id="guide"><span class="nav-icon">册</span>物品图鉴</button><div class="chapter">山间无事 · 茶香正好<small>进度自动保存</small></div><button id="daily"><span class="nav-icon gift">兑</span>兑换体力</button></nav>
 </main>
 <aside class="side-note"><span>壹</span><p>两两相合<br>好物自来</p><div></div><small>拖动相同物品合成<br>也可以依次点击两件物品</small></aside>
 <div id="toast" role="status" aria-live="polite"></div>
 <dialog id="modal" aria-label="茶铺详情"><button class="modal-close" aria-label="关闭弹窗">×</button><div id="modal-content"></div></dialog>
-<script src="assets/manifest.js"></script><script src="assets.js"></script><script src="game.js"></script><script src="persistence.js"></script><script src="app.js"></script>
+<script src="assets/manifest.js"></script><script src="assets.js"></script><script src="game.js"></script><script src="auth.js"></script><script src="persistence.js"></script><script src="app.js"></script>
 </body></html>
