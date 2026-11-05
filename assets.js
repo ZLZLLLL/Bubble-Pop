@@ -1,7 +1,7 @@
 /* A single decoded, shared WebP atlas. CSS coordinates work on file:// as well. */
 const AssetStore=(()=>{
   const manifest=window.ASSET_MANIFEST;
-  const aliases={leaf:'leaves',tea:'teacup',pot:'teapot',sweet:'rice',bun:'riceball',cake:'flowercakes',basket:'lunchbox'};
+  const aliases={leaf:'leaves',tea:'teacup',pot:'teapot',sweet:'rice',bun:'riceball',cake:'flowercakes',basket:'lunchbox',teaBasket:'chrysanthemum'};
   const resolved=id=>aliases[id]||id;
   function has(id){return !!manifest?.frames[resolved(id)];}
   function icon(id,cls=''){

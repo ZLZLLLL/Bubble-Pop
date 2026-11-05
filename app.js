@@ -7,21 +7,62 @@ function chime(merge=false){if(!sound)return;try{audioContext??=new (window.Audi
 function showModal(content){$('#modal-content').innerHTML=content;if(!$('#modal').open)$('#modal').showModal();}
 $('.modal-close').onclick=()=>$('#modal').close();$('#modal').addEventListener('click',e=>{if(e.target===$('#modal')){const r=e.target.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)e.target.close();}});
 function render(pop=-1){const focused=document.activeElement?.dataset?.index;$('#energy-value').textContent=state.energy;$('#coin-value').textContent=state.coins;$('#gem-value').textContent=state.gems;$('#level-value').textContent=['壹','贰','叁','肆','伍'][Math.min(4,Math.floor(state.served/3))];
-$('#board').innerHTML=state.board.map((x,i)=>{const item=Game.items[x],same=selected!==null&&i!==selected&&state.board[selected]===x&&item?.next;return `<button class="cell${x==='locked'?' locked':''}${selected===i?' selected':''}${same?' match':''}${pop===i?' pop':''}" data-index="${i}" aria-label="第${Math.floor(i/7)+1}行第${i%7+1}列，${item?.name||(x==='locked'?'竹帘，15铜钱解锁':'空位')}" aria-pressed="${selected===i}">${item?icon(item.icon)+(x==='basket'?icon('energy','generator-badge'):`<span class="item-level">${'ⅠⅡⅢ'[item.level-1]}</span>`):x==='locked'?icon('blind','blind-sprite'):''}</button>`;}).join('');
-$('#orders').innerHTML=state.orders.map((id,i)=>{const o=Game.orders[id],ready=Game.canServe(state,i);return `<div class="order">${icon(['grandma','scholar','woman','official','girl','sage'][id],'patron')}<span class="order-name">${o.name}</span><div class="tray">${icon('tray','tray-art')}${o.needs.map(n=>icon(n)).join('')}<button class="order-action${ready?' ready':''}" data-order="${i}" aria-label="${ready?'交付':'查看'}${o.name}的订单，奖励${o.reward}铜钱">${ready?'交付':icon('coin')}${ready?'':o.reward}</button></div></div>`;}).join('');
-const item=Game.items[state.board[selected]];$('#detail-icon').innerHTML=icon(item?.icon||'basket');$('#detail-title').textContent=item?.name||'一篮好食，静候有缘人';$('#detail-text').textContent=item?(item.next?`与另一件${item.name}合成${Game.items[item.next].name}`:item.icon==='basket'?'再次点击食材篮，消耗 1 点体力出物':'已达最高等级，可用于交付顾客订单'):'点食材篮出物 · 相同物品合成升级';save();if(focused!==undefined)document.querySelector('[data-index="'+focused+'"]').focus({preventScroll:true});}
-function produce(){const r=Game.produce(state);if(!r.ok)return toast(r.message);selected=null;render(r.index);chime();}
+$('#board').innerHTML=state.board.map((x,i)=>{const item=Game.items[x];return `<button class="cell${x==='locked'?' locked':''}${selected===i?' selected':''}${pop===i?' pop':''}" data-index="${i}" aria-label="第${Math.floor(i/7)+1}行第${i%7+1}列，${item?.name||(x==='locked'?'竹帘，15铜钱解锁':'空位')}" aria-pressed="${selected===i}">${item?icon(item.icon)+(item.generator?`<span class="source-mark">${item.generator==='rice'?'稻':'茶'}</span>`:`<span class="item-level">${['Ⅰ','Ⅱ','Ⅲ','Ⅳ','Ⅴ','Ⅵ'][item.level-1]}</span>`):x==='locked'?icon('blind','blind-sprite'):''}</button>`;}).join('');
+$('#orders').innerHTML=state.orders.map((id,i)=>{const o=Game.orders[id],ready=Game.canServe(state,i);return `<div class="order${ready?' order-ready':''}" data-order="${i}" tabindex="0" role="group" aria-label="${o.name}的订单：${o.needs.map(n=>Game.items[n].name).join('、')}，奖励${o.reward}铜钱。${ready?'拖入所需物品交付':'集齐后拖入交付'}">${icon(['grandma','scholar','woman','official','girl','sage'][id],'patron')}<span class="order-name">${o.name}</span><div class="tray">${icon('tray','tray-art')}${o.needs.map(n=>icon(n)).join('')}<span class="order-reward">${icon('coin')}${o.reward}</span></div><span class="order-hint">${ready?'拖入交付':'集齐后拖入'}</span></div>`;}).join('');
+const item=Game.items[state.board[selected]];$('#detail-icon').innerHTML=icon(item?.icon||'basket');$('#detail-title').textContent=item?.name||'一篮好食，静候有缘人';$('#detail-text').textContent=item?(item.next?`与另一件${item.name}合成${Game.items[item.next].name}`:item.generator?`${item.generator==='rice'?'只出稻谷 · 稻米链':'只出茶叶 · 茶点链'} · 每次 1 体力`:'已达最高等级，可用于交付顾客订单'):'稻米与茶点独立出物 · 拖至托盘交付';save();if(focused!==undefined)document.querySelector('[data-index="'+focused+'"]').focus({preventScroll:true});}
+function produce(chain){const r=Game.produce(state,chain);if(!r.ok)return toast(r.message);selected=null;render(r.index);chime();}
 function transfer(a,b){const r=Game.move(state,a,b);if(!r.ok){if(r.max)toast('这件好物已达最高级，可以交付订单');return;}selected=b;render(b);if(r.merged){toast(`合成成功 · ${Game.items[r.item].name}`);chime(true);}else chime();}
-function select(i){const x=state.board[i];if(x==='locked'){const r=Game.unlock(state,i);if(r.ok){toast('竹帘轻启，多一方天地 · −15 铜钱');render(i);chime();}else toast(r.message);return;}if(selected!==null&&selected!==i&&Game.items[state.board[selected]]){transfer(selected,i);return;}if(x==='basket'){selected=i;produce();return;}selected=selected===i?null:(x?i:null);render();}
+function select(i){const x=state.board[i];if(x==='locked'){const r=Game.unlock(state,i);if(r.ok){toast('竹帘轻启，多一方天地 · −15 铜钱');render(i);chime();}else toast(r.message);return;}if(Game.items[x]?.generator){produce(Game.items[x].generator);return;}if(selected!==null&&selected!==i&&Game.items[state.board[selected]]){transfer(selected,i);return;}selected=selected===i?null:(x?i:null);render();}
 $('#board').addEventListener('click',e=>{if(suppressClick){suppressClick=false;return;}const cell=e.target.closest('[data-index]');if(cell)select(Number(cell.dataset.index));});
 let drag=null,ghost=null,suppressClick=false;
-$('#board').addEventListener('pointerdown',e=>{const cell=e.target.closest('[data-index]');if(!cell||e.button!==0)return;const i=Number(cell.dataset.index);if(!Game.items[state.board[i]])return;drag={index:i,x:e.clientX,y:e.clientY,moving:false,pointer:e.pointerId};});
-window.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.pointer)return;if(!drag.moving&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>7){drag.moving=true;ghost=document.createElement('div');ghost.className='drag-ghost';ghost.innerHTML=icon(Game.items[state.board[drag.index]].icon);document.body.append(ghost);}if(ghost){ghost.style.left=e.clientX+'px';ghost.style.top=e.clientY+'px';}});
-window.addEventListener('pointerup',e=>{if(!drag||e.pointerId!==drag.pointer)return;if(drag.moving){suppressClick=true;setTimeout(()=>suppressClick=false,0);const cell=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-index]');if(cell)transfer(drag.index,Number(cell.dataset.index));}ghost?.remove();ghost=null;drag=null;});window.addEventListener('pointercancel',()=>{ghost?.remove();ghost=null;drag=null;});
-$('#orders').addEventListener('click',e=>{const b=e.target.closest('[data-order]');if(!b)return;const i=Number(b.dataset.order),r=Game.serve(state,i);if(r.ok){selected=null;render();toast(`客人心满意足 · +${r.reward} 铜钱`);chime(true);}else{const o=Game.orders[state.orders[i]];toast(`${o.name}想要：${o.needs.map(n=>Game.items[n].name).join('、')}`);}});
-$('#produce').onclick=produce;
-$('#help').onclick=()=>showModal(`<p class="dialog-kicker">小铺入门</p><h2>一合一味，慢慢来</h2><ul><li><b>取食材：</b>点击棋盘里的食材篮，或「取食材」按钮，每次消耗 1 点体力。</li><li><b>合成好物：</b>把相同物品拖到一起；也可先点一件，再点另一件。不同物品会交换位置。</li><li><b>招待客人：</b>凑齐上方订单，点绿色「交付」赚取铜钱。</li><li><b>扩大小铺：</b>点击与已开放格子相邻的竹帘，花 15 铜钱解锁。</li><li><b>补充体力：</b>领取每日好礼，或用 3 宝石换 30 体力。</li></ul><p>进度保存在当前浏览器。键盘 Tab 可选择按钮，Enter 完成操作。</p>`);
-$('#guide').onclick=()=>showModal(`<p class="dialog-kicker">山野好物集</p><h2>物品图鉴</h2><p>两件相同好物，合成下一阶。三级物品可用于订单。</p>${[['leaf','tea','pot'],['sweet','bun','cake']].map(chain=>`<div class="catalog-row">${chain.map((x,i)=>`${i?'<span>›</span>':''}<div class="catalog-item">${icon(x)}${Game.items[x].name}</div>`).join('')}</div>`).join('')}`);
+function clearDrag(){
+ document.querySelectorAll('.drag-source,.drop-ready,.drop-blocked').forEach(el=>el.classList.remove('drag-source','drop-ready','drop-blocked'));
+ if(drag&&$('#board').hasPointerCapture(drag.pointer))$('#board').releasePointerCapture(drag.pointer);
+ ghost?.remove();ghost=null;drag=null;
+}
+function deliverOrder(order,source){
+ const r=Game.deliver(state,order,source);if(!r.ok){toast(r.message);return;}
+ selected=null;render();toast(`客人心满意足 · +${r.reward} 铜钱`);chime(true);
+}
+$('#board').addEventListener('pointerdown',e=>{
+ if(drag||$('.game').inert)return;const cell=e.target.closest('[data-index]');if(!cell||e.button!==0)return;
+ const i=Number(cell.dataset.index);if(!Game.items[state.board[i]])return;
+ drag={index:i,x:e.clientX,y:e.clientY,moving:false,pointer:e.pointerId,size:cell.getBoundingClientRect().width};
+
+});
+window.addEventListener('pointermove',e=>{
+ if(!drag||e.pointerId!==drag.pointer)return;
+ if(!drag.moving&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>7){
+  drag.moving=true;$('#board').setPointerCapture(e.pointerId);ghost=document.createElement('div');ghost.className='drag-ghost';ghost.style.width=ghost.style.height=drag.size+'px';
+  ghost.innerHTML=icon(Game.items[state.board[drag.index]].icon);document.body.append(ghost);
+  document.querySelector(`[data-index="${drag.index}"]`).classList.add('drag-source');
+ }
+ if(!ghost)return;ghost.style.left=e.clientX+'px';ghost.style.top=e.clientY+'px';
+ document.querySelectorAll('.drop-ready,.drop-blocked').forEach(el=>el.classList.remove('drop-ready','drop-blocked'));
+ const target=document.elementFromPoint(e.clientX,e.clientY)?.closest('[data-order]');
+ if(target){const i=Number(target.dataset.order),valid=Game.orders[state.orders[i]].needs.includes(state.board[drag.index])&&Game.canServe(state,i);target.classList.add(valid?'drop-ready':'drop-blocked');}
+});
+window.addEventListener('pointerup',e=>{
+ if(!drag||e.pointerId!==drag.pointer)return;
+ const moving=drag.moving,source=drag.index,target=document.elementFromPoint(e.clientX,e.clientY);
+ clearDrag();if(!moving||$('.game').inert)return;
+ suppressClick=true;setTimeout(()=>suppressClick=false,0);
+ const order=target?.closest('[data-order]'),cell=target?.closest('[data-index]');
+ if(order)deliverOrder(Number(order.dataset.order),source);else if(cell)transfer(source,Number(cell.dataset.index));
+});
+window.addEventListener('pointercancel',clearDrag);
+window.addEventListener('blur',clearDrag);
+window.addEventListener('keydown',e=>{if(e.key==='Escape')clearDrag();});
+$('#orders').addEventListener('keydown',e=>{
+ if(e.key!=='Enter'&&e.key!==' ')return;
+ const order=e.target.closest('[data-order]');if(!order)return;e.preventDefault();
+ if(selected===null)return toast('先用键盘选择一件订单物品');
+ deliverOrder(Number(order.dataset.order),selected);
+});
+$('#produce-rice').onclick=()=>produce('rice');
+$('#produce-tea').onclick=()=>produce('tea');
+$('#help').onclick=()=>showModal(`<p class="dialog-kicker">小铺入门</p><h2>一合一味，慢慢来</h2><ul><li><b>取食材：</b>稻米篓只出稻谷，茶点篮只出茶叶；点击棋盘上的生成器或下方对应按钮，每次消耗 1 点体力。</li><li><b>合成好物：</b>把相同物品拖到一起；也可先点一件，再点另一件。不同物品会交换位置。</li><li><b>招待客人：</b>集齐上方订单，将其中一件所需物品拖到顾客托盘，一次交付整单赚取铜钱。</li><li><b>扩大小铺：</b>点击与已开放格子相邻的竹帘，花 15 铜钱解锁。</li><li><b>补充体力：</b>领取每日好礼，或用 3 宝石换 30 体力。</li></ul><p>进度自动保存到服务器。键盘可先选中物品，再 Tab 到顾客并按 Enter 交付。</p>`);
+$('#guide').onclick=()=>showModal(`<p class="dialog-kicker">山野好物集</p><h2>物品图鉴</h2><p>两件相同好物合成下一阶，两条链独立升级。按顾客需求交付对应物品。</p>${Object.entries(Game.chains).map(([key,chain])=>`<h3 class="chain-title">${key==='rice'?'稻米链':'茶点链'}</h3><div class="catalog-row">${chain.map((x,i)=>`${i?'<span>›</span>':''}<div class="catalog-item">${icon(x)}${Game.items[x].name}</div>`).join('')}</div>`).join('')}`);
 function today(){const d=new Date();return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;}
 $('#daily').onclick=()=>{const claimed=state.daily===today();showModal(`<p class="dialog-kicker">好日子，有好礼</p><h2>${claimed?'今日已领，明日再会':'山间送来一份心意'}</h2><div class="catalog-row">${[['energy','30 体力'],['coin','30 铜钱'],['gem','3 宝石']].map(([id,t])=>`<div class="catalog-item">${icon(id)}${t}</div>`).join('')}</div><p>${claimed?'去煮一壶好茶，招待今天的客人吧。':'每天来小铺坐坐，都有一份小惊喜。'}</p>${claimed?'':'<button class="modal-action" id="claim">收下好礼</button>'}`);if(!claimed)$('#claim').onclick=()=>{if(state.daily===today())return;state.daily=today();state.energy+=30;state.coins+=30;state.gems+=3;render();$('#modal').close();toast('好礼已收下 · 愿你今日有清欢');chime(true);};};
 $('#add-energy').onclick=()=>{showModal(`<p class="dialog-kicker">歇一歇，再开张</p><h2>补充体力</h2><p>花费 <b>3 宝石</b>，补充 <b>30 点体力</b>。<br>当前拥有 ${state.gems} 宝石。每日好礼也可领取体力。</p><button class="modal-action" id="refill">兑换 30 体力</button>`);$('#refill').onclick=()=>{if(state.gems<3)return toast('宝石不足，去看看今日好礼吧');state.gems-=3;state.energy+=30;render();$('#modal').close();toast('茶香满满 · +30 体力');};};
@@ -29,7 +70,7 @@ $('#level').onclick=()=>showModal(`<p class="dialog-kicker">小铺成长记</p><
 $('#sound').onclick=()=>{sound=!sound;$('#sound').textContent=`音效 · ${sound?'开':'关'}`;$('#sound').setAttribute('aria-label',sound?'关闭音效':'开启音效');chime();};
 async function boot(){
  $('.game').inert=true;$('.chapter small').textContent='正在读取服务器存档…';
- try{const remote=await SaveStore.load();if(remote){if(!Game.valid(remote))throw new Error('Invalid server save');state=remote;}render();$('.game').inert=false;}
+ try{const remote=await SaveStore.load();if(remote){if(!Game.valid(remote))throw new Error('Invalid server save');state=remote;}state=Game.migrate(state);render();$('.game').inert=false;}
  catch{showModal('<h2>暂时无法读取存档</h2><p>请确认服务器正常运行，然后刷新重试。为避免覆盖进度，暂不进入游戏。</p><button class="modal-action" onclick="location.reload()">重新加载</button>');}
 }
 boot();
