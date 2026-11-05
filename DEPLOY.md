@@ -6,12 +6,18 @@
 
 将发布包解压到服务器目录，在该目录执行：
 
+也可克隆本仓库后直接使用 Docker Compose；镜像会自动构建前端。
+
 ```sh
 cp .env.example .env
 # 编辑 .env，将 ACCESS_PASSWORD 改成自己的密码
 docker compose up -d --build
 docker compose logs -f --tail=50
 ```
+
+仓库不填写任何实际密码：`.env.example` 的密码值留空，Compose 使用 `${ACCESS_PASSWORD:?...}` 引用部署环境变量（`:?` 表示未设置或为空时给出提示）。可以由服务器管理面板、CI 或 shell 注入 `ACCESS_PASSWORD`，此时无需创建 `.env`。真实 `.env` 已加入 Git 和 Docker 的忽略列表。
+
+SQLite 是本地文件数据库，没有数据库用户名或密码；`ACCESS_PASSWORD` 仅用于网页访问验证。监听地址和宿主机端口也支持 `${BIND_ADDRESS:-127.0.0.1}`、`${APP_PORT:-5188}`，`:-` 后为默认值。
 
 数据库在持久化卷 `game-data` 中，容器重建保留数据。不要执行 `docker compose down -v`，该命令会删除存档卷。发布包已包含 public/，无需运行 Python 或安装美术处理工具。
 
@@ -32,7 +38,8 @@ game.example.com {
 服务器安装 Node.js 24 或更新版本。在发布包目录执行：
 
 ```sh
-export ACCESS_PASSWORD='替换为自己的密码'
+# 由部署环境事先注入 ACCESS_PASSWORD；以下命令只引用变量，不写密码
+export ACCESS_PASSWORD="${ACCESS_PASSWORD:?请先在部署环境设置 ACCESS_PASSWORD}"
 export DATA_DIR='/var/lib/cloud-teahouse'
 export HOST='127.0.0.1'
 export PORT='5188'
