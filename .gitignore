@@ -1,0 +1,16 @@
+data/
+.env
+release/
+public/
+output/
+__pycache__/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.log
+.env.*
+!.env.example
+assets/source/
+assets/cutouts/
+assets/preview-dark.jpg
+assets/preview.html

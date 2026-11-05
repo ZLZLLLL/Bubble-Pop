@@ -1,0 +1,210 @@
+{
+  "version": 1,
+  "atlas": "sprites.5449c776ee03.webp",
+  "background": "landscape.77da9139cb06.webp",
+  "width": 1152,
+  "height": 768,
+  "columns": 6,
+  "rows": 4,
+  "cellSize": 192,
+  "frames": {
+    "chrysanthemum": {
+      "x": 0,
+      "y": 0,
+      "width": 192,
+      "height": 192,
+      "column": 0,
+      "row": 0,
+      "sourceCrop": []
+    },
+    "wheat": {
+      "x": 192,
+      "y": 0,
+      "width": 192,
+      "height": 192,
+      "column": 1,
+      "row": 0,
+      "sourceCrop": []
+    },
+    "rice": {
+      "x": 384,
+      "y": 0,
+      "width": 192,
+      "height": 192,
+      "column": 2,
+      "row": 0,
+      "sourceCrop": []
+    },
+    "riceball": {
+      "x": 576,
+      "y": 0,
+      "width": 192,
+      "height": 192,
+      "column": 3,
+      "row": 0,
+      "sourceCrop": []
+    },
+    "lunchbox": {
+      "x": 768,
+      "y": 0,
+      "width": 192,
+      "height": 192,
+      "column": 4,
+      "row": 0,
+      "sourceCrop": []
+    },
+    "meal": {
+      "x": 960,
+      "y": 0,
+      "width": 192,
+      "height": 192,
+      "column": 5,
+      "row": 0,
+      "sourceCrop": []
+    },
+    "leaves": {
+      "x": 0,
+      "y": 192,
+      "width": 192,
+      "height": 192,
+      "column": 0,
+      "row": 1,
+      "sourceCrop": []
+    },
+    "teacup": {
+      "x": 192,
+      "y": 192,
+      "width": 192,
+      "height": 192,
+      "column": 1,
+      "row": 1,
+      "sourceCrop": []
+    },
+    "teapot": {
+      "x": 384,
+      "y": 192,
+      "width": 192,
+      "height": 192,
+      "column": 2,
+      "row": 1,
+      "sourceCrop": []
+    },
+    "flowercakes": {
+      "x": 576,
+      "y": 192,
+      "width": 192,
+      "height": 192,
+      "column": 3,
+      "row": 1,
+      "sourceCrop": []
+    },
+    "celebration": {
+      "x": 768,
+      "y": 192,
+      "width": 192,
+      "height": 192,
+      "column": 4,
+      "row": 1,
+      "sourceCrop": []
+    },
+    "frame": {
+      "x": 960,
+      "y": 192,
+      "width": 192,
+      "height": 192,
+      "column": 5,
+      "row": 1,
+      "sourceCrop": []
+    },
+    "blind": {
+      "x": 0,
+      "y": 384,
+      "width": 192,
+      "height": 192,
+      "column": 0,
+      "row": 2,
+      "sourceCrop": []
+    },
+    "tray": {
+      "x": 192,
+      "y": 384,
+      "width": 192,
+      "height": 192,
+      "column": 1,
+      "row": 2,
+      "sourceCrop": []
+    },
+    "coin": {
+      "x": 384,
+      "y": 384,
+      "width": 192,
+      "height": 192,
+      "column": 2,
+      "row": 2,
+      "sourceCrop": []
+    },
+    "energy": {
+      "x": 576,
+      "y": 384,
+      "width": 192,
+      "height": 192,
+      "column": 3,
+      "row": 2,
+      "sourceCrop": []
+    },
+    "grandma": {
+      "x": 768,
+      "y": 384,
+      "width": 192,
+      "height": 192,
+      "column": 4,
+      "row": 2,
+      "sourceCrop": []
+    },
+    "scholar": {
+      "x": 960,
+      "y": 384,
+      "width": 192,
+      "height": 192,
+      "column": 5,
+      "row": 2,
+      "sourceCrop": []
+    },
+    "woman": {
+      "x": 0,
+      "y": 576,
+      "width": 192,
+      "height": 192,
+      "column": 0,
+      "row": 3,
+      "sourceCrop": []
+    },
+    "official": {
+      "x": 192,
+      "y": 576,
+      "width": 192,
+      "height": 192,
+      "column": 1,
+      "row": 3,
+      "sourceCrop": []
+    },
+    "girl": {
+      "x": 384,
+      "y": 576,
+      "width": 192,
+      "height": 192,
+      "column": 2,
+      "row": 3,
+      "sourceCrop": []
+    },
+    "sage": {
+      "x": 576,
+      "y": 576,
+      "width": 192,
+      "height": 192,
+      "column": 3,
+      "row": 3,
+      "sourceCrop": []
+    }
+  }
+}

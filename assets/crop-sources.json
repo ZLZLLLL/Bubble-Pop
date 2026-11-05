@@ -1,0 +1,244 @@
+{
+  "chrysanthemum": {
+    "source": "chrysanthemum.jpg",
+    "crop": [
+      0,
+      0,
+      2752,
+      1536
+    ],
+    "width": 1286,
+    "height": 1042
+  },
+  "wheat": {
+    "source": "food.jpg",
+    "crop": [
+      102,
+      61,
+      696,
+      573
+    ],
+    "width": 505,
+    "height": 460
+  },
+  "rice": {
+    "source": "food.jpg",
+    "crop": [
+      737,
+      164,
+      1311,
+      553
+    ],
+    "width": 485,
+    "height": 308
+  },
+  "riceball": {
+    "source": "food.jpg",
+    "crop": [
+      1352,
+      123,
+      1966,
+      553
+    ],
+    "width": 540,
+    "height": 343
+  },
+  "lunchbox": {
+    "source": "food.jpg",
+    "crop": [
+      143,
+      573,
+      1065,
+      1065
+    ],
+    "width": 801,
+    "height": 439
+  },
+  "meal": {
+    "source": "food.jpg",
+    "crop": [
+      1147,
+      532,
+      1966,
+      1075
+    ],
+    "width": 749,
+    "height": 432
+  },
+  "leaves": {
+    "source": "food.jpg",
+    "crop": [
+      123,
+      1065,
+      655,
+      1454
+    ],
+    "width": 441,
+    "height": 358
+  },
+  "teacup": {
+    "source": "food.jpg",
+    "crop": [
+      819,
+      1085,
+      1249,
+      1475
+    ],
+    "width": 347,
+    "height": 328
+  },
+  "teapot": {
+    "source": "food.jpg",
+    "crop": [
+      102,
+      1454,
+      696,
+      1966
+    ],
+    "width": 507,
+    "height": 368
+  },
+  "flowercakes": {
+    "source": "food.jpg",
+    "crop": [
+      758,
+      1546,
+      1311,
+      1966
+    ],
+    "width": 499,
+    "height": 343
+  },
+  "celebration": {
+    "source": "food.jpg",
+    "crop": [
+      1352,
+      1331,
+      1966,
+      1966
+    ],
+    "width": 513,
+    "height": 543
+  },
+  "frame": {
+    "source": "interface.jpg",
+    "crop": [
+      84,
+      72,
+      1236,
+      914
+    ],
+    "width": 1094,
+    "height": 808
+  },
+  "blind": {
+    "source": "interface.jpg",
+    "crop": [
+      1356,
+      72,
+      2316,
+      1004
+    ],
+    "width": 914,
+    "height": 889
+  },
+  "tray": {
+    "source": "interface.jpg",
+    "crop": [
+      60,
+      986,
+      1248,
+      1702
+    ],
+    "width": 1138,
+    "height": 680
+  },
+  "coin": {
+    "source": "interface.jpg",
+    "crop": [
+      1308,
+      1120,
+      1848,
+      1667
+    ],
+    "width": 498,
+    "height": 521
+  },
+  "energy": {
+    "source": "interface.jpg",
+    "crop": [
+      1920,
+      1129,
+      2280,
+      1667
+    ],
+    "width": 312,
+    "height": 493
+  },
+  "grandma": {
+    "source": "portraits.jpg",
+    "crop": [
+      81,
+      80,
+      829,
+      826
+    ],
+    "width": 748,
+    "height": 746
+  },
+  "scholar": {
+    "source": "portraits.jpg",
+    "crop": [
+      895,
+      80,
+      1643,
+      826
+    ],
+    "width": 748,
+    "height": 746
+  },
+  "woman": {
+    "source": "portraits.jpg",
+    "crop": [
+      1709,
+      80,
+      2457,
+      826
+    ],
+    "width": 748,
+    "height": 746
+  },
+  "official": {
+    "source": "portraits.jpg",
+    "crop": [
+      81,
+      879,
+      829,
+      1625
+    ],
+    "width": 748,
+    "height": 746
+  },
+  "girl": {
+    "source": "portraits.jpg",
+    "crop": [
+      895,
+      879,
+      1643,
+      1625
+    ],
+    "width": 748,
+    "height": 746
+  },
+  "sage": {
+    "source": "portraits.jpg",
+    "crop": [
+      1709,
+      879,
+      2457,
+      1625
+    ],
+    "width": 748,
+    "height": 746
+  }
+}

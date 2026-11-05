@@ -1,0 +1,13 @@
+{
+  "name": "cloud-teahouse",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.cjs",
+    "build": "node scripts/build-release.cjs",
+    "test": "node --test game.test.cjs server.test.cjs"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  }
+}

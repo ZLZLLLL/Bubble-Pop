@@ -1,0 +1,17 @@
+services:
+  game:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5188:5188"
+    environment:
+      ACCESS_PASSWORD: ${ACCESS_PASSWORD:?Set ACCESS_PASSWORD in .env}
+    volumes:
+      - game-data:/app/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5188/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+volumes:
+  game-data:

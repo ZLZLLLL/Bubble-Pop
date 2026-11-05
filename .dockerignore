@@ -1,0 +1,10 @@
+.git
+.env
+data
+release
+output
+public
+assets/source
+assets/cutouts
+assets/preview-dark.jpg
+__pycache__
